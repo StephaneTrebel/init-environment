@@ -2,22 +2,15 @@
 TARGET := ${HOME}
 
 .PHONY: help
-## Show help
-help:
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+help: ## Display this help
+	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-15s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
-.PHONY: apt-update
-apt-update:
+.PHONY: docker-ce
+docker-ce: ## Install docker Community Edition
 	sudo apt update
-
-.PHONY: apt-upgrade
-apt-upgrade:
-	sudo apt upgrade
-
-.PHONY: docker
-docker: apt-update apt-upgrade ## Install docker Community Edition
 	sudo apt remove docker docker-engine docker.io containerd runc
-	sudo apt install \
+	sudo apt install -y \
 		apt-transport-https \
 		ca-certificates \
 		curl \
@@ -31,47 +24,24 @@ docker: apt-update apt-upgrade ## Install docker Community Edition
 	sudo apt install docker-ce docker-ce-cli containerd.io
 
 .PHONY: dependencies
-dependencies: apt-update apt-upgrade ## Install base dependencies
-	sudo apt install \
-		# Web browsers
-		chromium-browser firefox \
-		# dotfiles management
+dependencies: ## Install base dependencies
+	sudo apt update
+	sudo apt install -y \
 		stow \
-		# Build utilities for third-party dependencies
-	  build-essential cmake python-dev python3-dev \
-		# Miscellaneous utilities
-		ack tmux wget evince
+		flameshot \
+		ack wget evince
 
-.PHONY: shell-configuration
-shell-configuration: ## Add all my custom shell configuration
-	sudo apt install \
-	  # The one and only
-		vim vim-gtk \
-		# Terminal and the font that will be used with it
+.PHONY: install_gnucash
+install_gnucash: ## Install gnucash 3.8
+	sudo add-apt-repository ppa:sicklylife/gnucash3.8
+	sudo apt update
+	sudo apt install -y gnucash
+
+.PHONY: terminal
+terminal: ## Install terminal dependencies
+	sudo apt update
+	sudo apt install -y \
 		konsole fonts-firacode
-
-.PHONY: vim-ide
-vim-ide: dependencies ## Install vim and all my vim configuration
-	sudo apt install \
-	  # The one and only
-		vim vim-gtk \
-		# Terminal and the font that will be used with it
-		konsole fonts-firacode
-
-.PHONY: install-vim-custom-configuration
-install-vim-custom-configuration:
-	# Add vim configuration as a symbolic link to the submodules directory
-	stow -d submodules -t $${TARGET} vim
-	# Launch vim with the plugin install command and quit immediately
-	vim -c "PluginInstall | q"
-
-.PHONY: compile-youcompleteme-binaries
-compile-youcompleteme-binaries: install-vim-custom-configuration
-	cd submodules/vim/.vim/bundle/YouCompleteMe && \
-	python3 ./install.py
-
-
-
 
 .PHONY: all
-all: dependencies vim-ide docker gnucash
+all:
