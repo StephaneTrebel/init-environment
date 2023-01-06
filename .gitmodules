@@ -1,9 +1,9 @@
 [submodule "submodules/tmux"]
 	path = submodules/tmux
-	url = git@github.com:StephaneTrebel/tmux.git
+	url = github-perso:StephaneTrebel/tmux.git
 [submodule "submodules/dotfiles"]
 	path = submodules/dotfiles
-	url = git@github.com:StephaneTrebel/dotfiles.git
+	url = github-perso:StephaneTrebel/dotfiles.git
 [submodule "submodules/neovim"]
 	path = submodules/neovim
-	url = git@github.com:StephaneTrebel/neovim.git
+	url = github-perso:StephaneTrebel/neovim.git
