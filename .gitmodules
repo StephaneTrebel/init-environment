@@ -1,6 +1,3 @@
-[submodule "submodules/vim"]
-	path = submodules/vim
-	url = git@github.com:StephaneTrebel/vim.git
 [submodule "submodules/tmux"]
 	path = submodules/tmux
 	url = git@github.com:StephaneTrebel/tmux.git
